@@ -2,6 +2,7 @@
 package render
 
 import (
+	"bytes"
 	"encoding/json"
 	"log"
 	"strings"
@@ -11,19 +12,35 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
+// tpl function to render a template with data, supporting recursion
+func tpl(tplStr string, data interface{}, funcMap template.FuncMap) (string, error) {
+	tmpl, err := template.New("tpl").Funcs(funcMap).Parse(tplStr)
+	if err != nil {
+		return "", err
+	}
+	var buf bytes.Buffer
+	err = tmpl.Execute(&buf, data)
+	if err != nil {
+		return "", err
+	}
+	return buf.String(), nil
+}
+
 func funcMap() template.FuncMap {
 	f := sprig.TxtFuncMap()
 	delete(f, "env")
 	delete(f, "expandenv")
-
-	extra := template.FuncMap{
+	var extra template.FuncMap
+	extra = template.FuncMap{
 		"toYaml":   toYAML,
 		"toJson":   toJSON,
 		"fromYaml": fromYAML,
+		"tpl": func(tplStr string, data interface{}) (string, error) {
+			return tpl(tplStr, data, extra)
+		},
 
 		// functions are not implemented and I don't want to
 		"include":  func(string, interface{}) string { return "not implemented" },
-		"tpl":      func(string, interface{}) string { return "not implemented" },
 		"required": func(string, interface{}) string { return "not implemented" },
 	}
 
