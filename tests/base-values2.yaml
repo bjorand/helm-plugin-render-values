@@ -1,5 +1,9 @@
+importValuesFrom: 
+  - base-values1.yaml
+
 enabled: true
 clusterName: aws-eu-test-42
+ecrRegistry: 1.dkr.ecr.{{ .Values.region }}.amazonaws.com
 default: from_base
 defaults:
   minReplicas: 3

@@ -11,6 +11,7 @@ testint: 1
 template: '{\{ template $expr }}'
 myapp:
   cluster: {{ .Values.clusterName }}
+  image: "{{ tpl .Values.ecrRegistry . }}/image:latest"
   enabled: {{ .Values.enabled }}
   controller:
     autoscaling:
