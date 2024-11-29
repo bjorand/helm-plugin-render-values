@@ -1,5 +1,4 @@
 importValuesFrom: 
-- self
 - testglob/*/values.yaml
 
 global:

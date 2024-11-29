@@ -8,6 +8,7 @@ import (
 
 // Read the file.
 func readFile(file string) []byte {
+	file = filepath.Join(os.Getenv("BASEDIR_VALUE_FILES"), file)
 	data, err := os.ReadFile(file)
 	if err != nil {
 		errLog.Fatalf("ERROR: \"%v\"}", err)
@@ -43,10 +44,4 @@ func DirrectoryMapping(dir []string, val Values) Values {
 		data[dir[0]] = val
 	}
 	return data
-}
-
-// Make file path absolut depend on main file.
-func absolutePath(basefile, depenfile string) string {
-	dir := filepath.Dir(basefile)
-	return filepath.Join(dir, depenfile)
 }

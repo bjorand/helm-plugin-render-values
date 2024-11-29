@@ -1,12 +1,13 @@
 importValuesFrom: 
 - self
-- base-values1.yaml
 - base-values2.yaml
+
 
 extendRenderWith:
 - extended-values1.yaml
 
 default: from_this
+region: {{ index .Values "eu-central-1" }}
 testint: 1
 template: '{\{ template $expr }}'
 myapp:

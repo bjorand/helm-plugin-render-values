@@ -8,3 +8,4 @@ defaults:
     requests:
       cpu: 50m
       memory: 256Mi
+eu-central-1: db2

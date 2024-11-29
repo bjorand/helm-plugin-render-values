@@ -8,11 +8,12 @@ import (
 	"strings"
 	"text/template"
 
-	"gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v3"
 )
 
 var (
-	errLog log.Logger
+	errLog  log.Logger
+	imports []string
 )
 
 type Values map[interface{}]interface{}
@@ -65,14 +66,28 @@ func (vr *ValuesRenderer) GetFiles() error {
 		return fmt.Errorf("broken file: \"%s\" reason: \"%v\"", vr.filename, err)
 	}
 	if len(extraFiles.ImportValues) > 0 {
+
 		for i, importFilename := range extraFiles.ImportValues {
+			for _, i := range imports {
+				if i == importFilename {
+					return fmt.Errorf("cannot import %s: import cycle detected in file: \"%s\",", importFilename, vr.filename)
+				}
+			}
+			imports = append(imports, importFilename)
 			if importFilename == "self" {
 				extraFiles.ImportValues[i] = vr.filename
 				dmsgs = append(dmsgs, "importValuesFiles: self file will been used for values\n")
 			} else {
-				extraFiles.ImportValues[i] = absolutePath(vr.filename, importFilename)
+				extraFiles.ImportValues[i] = importFilename
 				dmsgs = append(dmsgs, "importValuesFiles: extrafile "+importFilename+" will been used for values\n")
+				valuesRender := new(ValuesRenderer)
+				valuesRender.filename = importFilename
+				if err := valuesRender.GetFiles(); err != nil {
+					return err
+				}
+				extraFiles.ImportValues = append(extraFiles.ImportValues, valuesRender.files.ImportValues...)
 			}
+
 		}
 	} else {
 		extraFiles.ImportValues = append(extraFiles.ImportValues, vr.filename)
@@ -80,7 +95,7 @@ func (vr *ValuesRenderer) GetFiles() error {
 	}
 	if len(extraFiles.ExtendRender) > 0 {
 		for i, renderFilername := range extraFiles.ExtendRender {
-			extraFiles.ExtendRender[i] = absolutePath(vr.filename, renderFilername)
+			extraFiles.ExtendRender[i] = renderFilername
 			dmsgs = append(dmsgs, "extendRenderWith: extrafile "+renderFilername+" will been rendred\n")
 		}
 	} else {
@@ -164,7 +179,6 @@ func (vr *ValuesRenderer) RenderTemplate() error {
 			return fmt.Errorf("can't create template: %s}", err)
 		}
 		tpl.Option("missingkey=error")
-
 		err = tpl.ExecuteTemplate(&buf, filepath.Base(file), vr.values)
 		if err != nil {
 			return fmt.Errorf("can't render template: %s}", err)

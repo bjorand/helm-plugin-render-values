@@ -23,11 +23,11 @@ fi
 
 
 if [ "$(uname)" = "Darwin" ]; then
-    url="https://github.com/vivid-money/helm-plugin-render-values/releases/download/v${version}/helm-plugin-render-values_${version}_darwin_${arch}.tar.gz"
+    url="https://github.com/bjorand/helm-plugin-render-values/releases/download/v${version}/helm-plugin-render-values_${version}_darwin_${arch}.tar.gz"
 elif [ "$(uname)" = "Linux" ] ; then
-    url="https://github.com/vivid-money/helm-plugin-render-values/releases/download/v${version}/helm-plugin-render-values_${version}_linux_${arch}.tar.gz"
+    url="https://github.com/bjorand/helm-plugin-render-values/releases/download/v${version}/helm-plugin-render-values_${version}_linux_${arch}.tar.gz"
 else
-    url="https://github.com/vivid-money/helm-plugin-render-values/releases/download/v${version}/helm-plugin-render-values_${version}_windows_${arch}.tar.gz"
+    url="https://github.com/bjorand/helm-plugin-render-values/releases/download/v${version}/helm-plugin-render-values_${version}_windows_${arch}.tar.gz"
 fi
 
 echo $url

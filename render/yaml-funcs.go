@@ -9,7 +9,7 @@ import (
 	"text/template"
 
 	"github.com/Masterminds/sprig/v3"
-	"gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v3"
 )
 
 // tpl function to render a template with data, supporting recursion
